@@ -1,7 +1,7 @@
 {
-  "name": "mikro-sunucu",
+  "name": "mikro-sunucu-test",
   "version": "1.0.0",
-  "description": "Hafif izleme sunucusu",
+  "description": "ExpressJS test projesi",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
