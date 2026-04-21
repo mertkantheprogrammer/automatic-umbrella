@@ -1,24 +1,31 @@
 const express = require('express');
 const app = express();
-const port = process.env.PORT || 3000;
 
+// Sunucu paneli portu genellikle ortam değişkeni olarak atar.
+// Eğer atamazsa varsayılan olarak 3000 portunu kullanır.
+const PORT = process.env.PORT || 3000;
+
+// Ana dizin: Sunucu panelinin "Readiness Probe" kontrolü için 200 OK dönmeli.
 app.get('/', (req, res) => {
-  res.json({
-    durum: "Çalışıyor",
-    mesaj: "ExpressJS ile sunucu uyanık!",
-    zaman: new Date().toISOString()
+  res.status(200).json({
+    durum: "Aktif",
+    mesaj: "Sunucu başarıyla ayağa kalktı!",
+    zaman: new Date().toLocaleString('tr-TR')
   });
 });
 
-// Sunucunun RAM kullanımı gibi basit bilgileri görmek istersen
+// Sistem bilgilerini görmek için: /sistem
 app.get('/sistem', (req, res) => {
-  const usage = process.memoryUsage();
+  const memoryUsage = process.memoryUsage().rss / 1024 / 1024;
   res.json({
-    ram_kullanimi: `${Math.round(usage.rss / 1024 / 1024 * 100) / 100} MB`,
-    uptime: `${Math.round(process.uptime())} saniye`
+    ram_kullanimi: memoryUsage.toFixed(2) + " MB",
+    uptime: Math.floor(process.uptime()) + " saniye",
+    platform: process.platform,
+    node_version: process.version
   });
 });
 
-app.listen(port, () => {
-  console.log(`Sunucu ${port} portunda hazır.`);
+// ÖNEMLİ: '0.0.0.0' yazmazsan Docker konteyneri dış isteklere cevap vermez.
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Uygulama ${PORT} portu üzerinde dinleniyor...`);
 });
